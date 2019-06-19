@@ -2,9 +2,10 @@ const gulp = require('gulp');
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const browserSync = require('browser-sync').create();
-//const cleanCss = require('gulp-clean-css');
-//const uglify = require('gulp-uglify');
-//const babel = require('gulp-babel');
+var rename = require("gulp-rename");
+const cleanCss = require('gulp-clean-css');
+const uglify = require('gulp-uglify');
+const babel = require('gulp-babel');
 //const concat = require('gulp-concat');
 //const sourcemaps = require('gulp-sourcemaps');
 
@@ -15,10 +16,15 @@ function styles() {
             browsers: ['>0.1%'],
             cascade: false
         }))
-        /*.pipe(cleanCss({
-            level: 2
-        }))*/
-    .pipe(gulp.dest('./build/css'))
+        .pipe(gulp.dest('./build/css'))
+        .pipe(cleanCSS({
+        level: 2
+        }))
+        .pipe(rename({
+        suffix: ".min",
+        }))
+        .pipe(gulp.dest('./build/css'))
+
         .pipe(browserSync.stream());
 }
 /*
@@ -30,15 +36,21 @@ const jsFiles = [
 function animation() {
     return gulp.src('./src/js/*.js')
         //.pipe(sourcemaps.init())
-        /*.pipe(uglify({
-            toplevel: true
-        }))*/
-        /*.pipe(babel({
+        .pipe(babel({
         presets: ['env']
-        }))*/
+        }))
         //.pipe(concat('main.js'))
         //.pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./build/js'))
+
+        .pipe(uglify({
+            toplevel: true
+        }))
+        .pipe(rename({
+            suffix: ".min",
+            }))
+        .pipe(gulp.dest('./build/css'))
+    
         .pipe(browserSync.stream());
 }
 
