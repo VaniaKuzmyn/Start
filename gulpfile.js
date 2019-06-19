@@ -36,20 +36,20 @@ const jsFiles = [
 function animation() {
     return gulp.src('./src/js/*.js')
         //.pipe(sourcemaps.init())
-        .pipe(babel({
-        presets: ['env']
-        }))
+        
         //.pipe(concat('main.js'))
         //.pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./build/js'))
-
+        .pipe(babel({
+            presets: ['env']
+            }))
         .pipe(uglify({
             toplevel: true
         }))
         .pipe(rename({
             suffix: ".min",
             }))
-        .pipe(gulp.dest('./build/css'))
+        .pipe(gulp.dest('./build/js'))
     
         .pipe(browserSync.stream());
 }
@@ -60,7 +60,7 @@ function watch() {
     });
 
     gulp.watch("./src/sass/*.sass", styles);
-    gulp.watch("./src/js/main.js", animation);
+    gulp.watch("./src/js/*.js", animation);
     gulp.watch("./index.html").on('change', browserSync.reload);
 }
 
