@@ -1,27 +1,34 @@
 const gulp = require('gulp');
-const sass = require('gulp-sass');
-const autoprefixer = require('gulp-autoprefixer');
+//const sass = require('gulp-sass');
+const less = require('gulp-less');
+const autoprefixer = require('autoprefixer');
 const browserSync = require('browser-sync').create();
-var rename = require("gulp-rename");
+const rename = require("gulp-rename");
 const cleanCss = require('gulp-clean-css');
 const uglify = require('gulp-uglify');
 const babel = require('gulp-babel');
+const postcss = require('gulp-postcss');
+//const sassGlob = require('gulp-sass-glob');
 //const concat = require('gulp-concat');
 //const sourcemaps = require('gulp-sourcemaps');
 
+//sass.compiler = require('node-sass');
+
 function styles() {
-    return gulp.src('./src/sass/main.sass')
-        .pipe(sass())
-        .pipe(autoprefixer({
-            browsers: ['>0.1%'],
-            cascade: false
-        }))
+    //return gulp.src('./src/sass/main.sass')
+    return gulp.src('./src/less/main.less')
+        .pipe(less().on('error',console.log.bind(console)))
+        //.pipe(sassGlob())
+        //.pipe(sass().on('error', sass.logError))
+        .pipe(postcss([ autoprefixer(
+            '>0.1%'
+        ) ]))
         .pipe(gulp.dest('./build/css'))
-        .pipe(cleanCSS({
+        .pipe(cleanCss({
         level: 2
         }))
         .pipe(rename({
-        suffix: ".min",
+            suffix: ".min",
         }))
         .pipe(gulp.dest('./build/css'))
 
@@ -33,6 +40,7 @@ const jsFiles = [
     './src/js/form.js',
 ]
 */
+
 function animation() {
     return gulp.src('./src/js/*.js')
         //.pipe(sourcemaps.init())
@@ -54,12 +62,16 @@ function animation() {
         .pipe(browserSync.stream());
 }
 
+
 function watch() {
     browserSync.init({
         server: "./"
     });
-
-    gulp.watch("./src/sass/*.sass", styles);
+    //gulp.watch("./src/sass/*.sass").on('change', function(){
+    gulp.watch("./src/less/*.less").on('change', function(){
+        styles();
+        browserSync.reload();
+    });
     gulp.watch("./src/js/*.js", animation);
     gulp.watch("./index.html").on('change', browserSync.reload);
 }
